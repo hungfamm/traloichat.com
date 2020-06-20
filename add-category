@@ -1,0 +1,65 @@
+<?php
+
+/*Template Name: Add Category*/
+
+get_header();
+if(isset($_POST['submit'])){
+if(!empty($_REQUEST['newcat'])){
+$cat_ID = get_cat_ID( $_POST['newcat'] );
+
+
+//If not create new category
+if($cat_ID == 0) {
+$cat_name = $_POST['newcat'];
+$parenCatID = 0;
+$new_cat_ID = wp_create_category($cat_name,$parenCatID);
+echo 'Category added successfully.<br />';
+}
+
+else {echo 'That category already exists<br />';}
+}
+
+if(!empty($_REQUEST['newsubcat'])){
+$cat_ID = get_cat_ID( $_POST['newcat'] );
+if($cat_ID == 0) {
+$cat_name = $_POST['newsubcat'];
+$parenCatID = $_POST['cat-parent'];
+$new_cat_ID = wp_create_category($cat_name,$parenCatID);
+echo 'Sub Category added successfully.<br />';
+}
+
+else {echo 'That Sub category already exists<br />';}
+}
+}
+?>
+
+<div id="primary">
+<div id="content" role="main">
+Form for creating category
+<form action="" method="post">
+Enter New Category Title <input type="text" name="newcat" value="" /><br />
+Select Parent Category
+<select name="cat-parent" >
+<option value="0"><?php echo esc_attr(__('Select Category')); ?></option>
+<?php
+$categories= get_categories(array('orderby ' => 'id' , 'order' => 'DESC'));
+foreach ($categories as $category) {
+$option = '<option value="'.$category->term_id.'">';
+$option .= $category->cat_name;
+$option .= '</option>';
+echo $option;
+}
+?>
+</select><br />
+
+Enter New Sub Category Title <input type="text" name="newsubcat" value="" /><br />
+
+<input type="submit" name="submit" value="Submit" />
+
+</form>
+
+</div><!-- #content -->
+
+</div><!-- #primary -->
+
+<?php get_footer(); ?>
